@@ -1,6 +1,4 @@
 #![recursion_limit = "128"]
-extern crate proc_macro;
-extern crate proc_macro2;
 
 use proc_macro::TokenStream;
 
@@ -98,7 +96,7 @@ fn try_generate_main_wrapped(
                 MAIN_INVOKED = true;
             }
             let _block = async #block;
-            unsafe {::core::executor::block_on(_block) }
+            unsafe { ::libtock::executor::block_on(_block) }
         }
     ))
 }
@@ -126,7 +124,7 @@ mod tests {
                 let _block = async {
                     method_call().await;
                 };
-                unsafe { ::core::executor::block_on(_block) }
+                unsafe { ::libtock::executor::block_on(_block) }
             }
         ))
         .unwrap();
