@@ -9,11 +9,13 @@ edition = "2018"
 alloc = ["libtock-core/alloc"]
 custom_panic_handler = ["libtock-core/custom_panic_handler"]
 custom_alloc_error_handler = ["libtock-core/custom_alloc_error_handler"]
+emulation = ["libtock-core/emulation", "libtock_emulation"]
 __internal_disable_gpio_in_integration_test = []
 
 [dependencies]
 libtock-core = { path = "core" }
 libtock_codegen = { path = "codegen" }
+libtock_emulation = { path = "emulation", optional = true }
 futures = { version = "0.3.1", default-features = false, features = ["unstable", "cfg-target-has-atomic"] }
 
 [dev-dependencies]

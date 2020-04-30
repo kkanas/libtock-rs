@@ -95,6 +95,11 @@ fn try_generate_main_wrapped(
                 }
                 MAIN_INVOKED = true;
             }
+            // Some extra setup is required for emulation.
+            if cfg!(feature = "emulation") {
+                use libtock_emulation;
+                libtock_emulation::setup();
+            }
             let _block = async #block;
             unsafe { ::libtock::executor::block_on(_block) }
         }
