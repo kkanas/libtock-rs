@@ -14,6 +14,7 @@ usage:
 	@echo " - opentitan"
 	@echo " - hifive1"
 	@echo " - nrf52"
+	@echo " - apollo3"
 	@echo
 	@echo "Run 'make setup' to setup Rust to build libtock-rs."
 	@echo "Run 'make <board>' to build libtock-rs for that board"
@@ -58,6 +59,14 @@ test:
 .PHONY: analyse-stack-sizes
 analyse-stack-sizes:
 	cargo stack-sizes $(release) --example $(EXAMPLE) $(features) -- -Z emit-stack-sizes
+
+.PHONY: apollo3
+apollo3:
+	PLATFORM=apollo3 cargo build $(release) --target=thumbv7em-none-eabi --examples $(features)
+
+.PHONY: flash-apollo3
+flash-apollo3:
+	PLATFORM=apollo3 cargo run $(release) --target=thumbv7em-none-eabi --example $(EXAMPLE) $(features)
 
 .PHONY: hail
 hail:
