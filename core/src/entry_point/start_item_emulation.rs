@@ -1,1 +1,1 @@
-// rustc handles creating the entry point so noting is needed here.
+// rustc handles creating the entry point so nothing is needed here.

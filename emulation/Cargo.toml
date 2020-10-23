@@ -8,3 +8,5 @@ edition = "2018"
 
 [dependencies]
 clap = "2.33.0"
+zerocopy = "0.3.0"
+
