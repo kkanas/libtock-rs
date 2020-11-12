@@ -19,6 +19,7 @@ pub mod sensors;
 pub mod simple_ble;
 pub mod temperature;
 pub mod timer;
+pub use libtock_emulation;
 
 pub use drivers::retrieve_drivers;
 pub use libtock_codegen::main;
