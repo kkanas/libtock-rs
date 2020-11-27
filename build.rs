@@ -22,14 +22,21 @@ fn main() {
 
     let platform_name =
         read_env_var(PLATFORM_ENV_VAR).or_else(|| read_board_name_from_file(PLATFORM_FILE_NAME));
-    if let Some(platform_name) = platform_name {
-        println!("cargo:rustc-env={}={}", PLATFORM_ENV_VAR, platform_name);
-        copy_linker_file(platform_name.trim());
-    } else {
-        println!(
-            "cargo:warning=No platform specified. \
-             Remember to manually specify a linker file.",
-        );
+
+    match platform_name {
+        Some(platform_name) if platform_name == "emulation" => {
+            println!("cargo:info=Emulation selected.");
+        }
+        Some(platform_name) => {
+            println!("cargo:rustc-env={}={}", PLATFORM_ENV_VAR, platform_name);
+            copy_linker_file(platform_name.trim());
+        }
+        None => {
+            println!(
+                "cargo:warning=No platform specified. \
+                 Remember to manually specify a linker file.",
+            );
+        }
     }
 
     set_default_env(APP_HEAP_SIZE, "1024");

@@ -8,7 +8,9 @@ edition = "2018"
 alloc = [ "linked_list_allocator" ]
 custom_panic_handler = []
 custom_alloc_error_handler = []
+emulation = [ "libtock_emulation" ]
 
 [dependencies]
 linked_list_allocator = { optional = true, version = "=0.8.1", default-features = false }
 libtock_codegen = { path = "../codegen" }
+libtock_emulation = { path = "../emulation", optional = true }
