@@ -129,6 +129,9 @@ fn send_allow_slice(socket: &UnixDatagram, allow: &Syscall) {
 
     send_msg(socket, get_identifier(), &slices_info);
     send_msg(socket, get_identifier(), &slice_info);
+    if allow.args[2] == 0 {
+        return;
+    }
     unsafe {
         let slice: &mut [u8] = std::slice::from_raw_parts_mut(address as *mut u8, length);
         send_bytes(socket, slice);
