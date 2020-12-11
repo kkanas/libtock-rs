@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+use std::collections::HashSet;
 use std::os::unix::net::UnixDatagram;
 use std::path::Path;
 use std::string::String;
@@ -42,6 +44,9 @@ pub struct AppConfig {
     pub kernel_socket_tx: UnixDatagram,
 
     pub log_level: LogLevel,
+
+    /// Set of addresses ALLOW'ED to Kernel
+    pub allow_set: RefCell<HashSet<*const u8>>,
 }
 
 static mut APP_CONFIG: Option<Box<AppConfig>> = None;
@@ -69,9 +74,10 @@ pub fn set_config(identifier: usize, socket_rx: &Path, socket_tx: &Path, log_lev
         kernel_socket_rx: rx,
         kernel_socket_tx: tx,
         log_level,
+        allow_set: RefCell::new(HashSet::new()),
     });
 
-    // Log macros are worning only after APP_CONFIG is set
+    // Log macros are working only after APP_CONFIG is set
     unsafe {
         APP_CONFIG = Some(config);
     }
@@ -83,6 +89,15 @@ pub fn get_config() -> Option<&'static AppConfig> {
         match &APP_CONFIG {
             Some(config) => Some(&config),
             None => None,
+        }
+    }
+}
+
+pub fn get_config_or_panic() -> &'static AppConfig {
+    unsafe {
+        match &APP_CONFIG {
+            Some(config) => &config,
+            None => panic!("APP : Configuration not set."),
         }
     }
 }

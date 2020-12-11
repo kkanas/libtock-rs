@@ -142,8 +142,15 @@ fn recv_allow_slices(sock: &UnixDatagram) {
     let slices_count: AllowsInfo = recv_msg(&sock);
     let slices_count = slices_count.number_of_slices;
 
+    let cfg = config::get_config_or_panic();
+
     for _ in 0..slices_count {
         let allow_slice: AllowSliceInfo = recv_msg(&sock);
+        let address = allow_slice.address as *const u8;
+        if !cfg.allow_set.borrow().contains(&address) {
+            log_error!("RuntimeError Kernel sent unallowed address {:p}", address);
+            continue;
+        }
         unsafe {
             let slice: &mut [u8] =
                 std::slice::from_raw_parts_mut(allow_slice.address as *mut u8, allow_slice.length);
@@ -203,12 +210,22 @@ impl Syscall {
             args: [major as usize, arg1, 0, 0],
         }
     }
+    pub fn update_allow_set(self) {
+        if self.syscall_number != SyscallNum::ALLOW as usize {
+            return;
+        }
+
+        let cfg = config::get_config_or_panic();
+        let address = self.args[2] as *const u8;
+        cfg.allow_set.borrow_mut().insert(address);
+    }
 
     /// 1. Send syscall.
     /// 2. Send allow slice if syscall == ALLOW
     /// 3. Wait for syscall return value.
     pub fn invoke(self) -> isize {
         log_dbg!("SYSCALL: {:?}", self);
+        self.update_allow_set();
         let (kernel_rx, kernel_tx) = match config::get_config() {
             Some(config) => (&config.kernel_socket_rx, &config.kernel_socket_tx),
             None => panic!("APP : Configuration not set."),
