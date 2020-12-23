@@ -8,10 +8,10 @@ edition = "2018"
 proc-macro = true
 
 [features]
-emulation = []
+emulation = [ "libtock_emulation" ]
 
 [dependencies]
 syn = { version = "1.0.6", features = ["full", "extra-traits"] }
 quote = "1.0.2"
 proc-macro2 = "1.0.6"
-libtock_emulation = { path = "../emulation" }
+libtock_emulation = { path = "../emulation", optional = true  }

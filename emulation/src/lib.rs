@@ -1,3 +1,5 @@
+#![cfg_attr(not(feature = "emulation"), no_std)]
+
 #[allow(unused_macros)]
 #[cfg(not(feature = "emulation"))]
 macro_rules! log {
@@ -78,16 +80,20 @@ macro_rules! log_dbg {
     }
 }
 
+#[cfg(feature = "emulation")]
 pub mod syscall;
 
 #[allow(unused)]
+#[cfg(feature = "emulation")]
 mod config;
 
-use std::path::Path;
+#[cfg(not(feature = "emulation"))]
+pub fn setup() {}
 
-use clap::{App, Arg};
-
+#[cfg(feature = "emulation")]
 pub fn setup() {
+    use clap::{App, Arg};
+    use std::path::Path;
     let arg_match = App::new("A libtock-rs process")
         .arg(
             Arg::with_name("id")
